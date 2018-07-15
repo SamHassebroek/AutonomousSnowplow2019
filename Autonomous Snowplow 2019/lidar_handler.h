@@ -29,13 +29,16 @@ public:
 	                           lidar_handler(double x, double y);
 
 private:
-	static bool			       prv_bad_scan;
+	vector<string>             prv_raw_hex_data;
 	lidar_data_packet          prv_raw_data;
 	lidar_data_packet          prv_safe_data;
-	static int				   prv_data_points;
+	bool					   prv_bad_scan;
+	int				           prv_data_points;
+	double                     prv_x_position;
+	double                     prv_y_position;
+	bool                       prv_raw_data_ready;
 
 public:
-	void                       run_scan();
 	void                       perform_scan();
 	void                       analyze_scan();
 	int                        convert_to_decimal(string num);

@@ -1,89 +1,23 @@
-/*
-When changing to a different lidar you need to change:
-- angular resolution increments
-- ip address
-- port number
-- timeout amount in milliseconds (15 Hz would equal 66.6666 ms)
-===============================================================
-- might be inconsistent with tim551 - can't check end of string
-
-*/
 #include "lidar_handler.h"
 
-using namespace std;
-
-//initialize static private variables
-bool               lidar_handler::prv_bad_scan    = false;
-int                lidar_handler::prv_data_points = 0;
-
-//is there new data for the grid to grab?
-static bool data_ready = false;
-
-vector<string> raw_hex_scan;
-
-lidar_data_packet prv_raw_data;
-
-double x_pos, y_pos;
-
-//constructor
+/*--------------------------------------------
+Constructor
+--------------------------------------------*/
 lidar_handler::lidar_handler(double x, double y) {
-	//set variables
+	/*--------------------------------------------
+	Set x and y location of the lidar when program 
+	starts, initialize other variables
+	--------------------------------------------*/
+	prv_x_position = x;
+	prv_y_position = y;
+	prv_data_points = 0;
+	prv_bad_scan = FALSE;
 
-	//when creating the lidar send x and y
-	//TODO add orientation
-	x_pos = x;
-	y_pos = y;
 }
 
-void lidar_handler::run_scan() {
-	//cout << "size of data packet vector: " << prv_raw_data.size() << endl;
-	//for timing the function
-	auto start = clock();
-
-	//do the scan and set flag for correctness
-	perform_scan();
-
-	//make the data readable
-	analyze_scan();
-
-	//print to check
-	if (!prv_bad_scan) {
-		//cout << endl << "distance at half: " << get<1>((&prv_raw_data)->prv_raw_data[(&prv_raw_data)->prv_data_points/2]);
-		//cout << "angle at half: " << get<0>(raw_decimal_data[prv_data_points/2]) << endl;
-	}
-
-	//calculate run time
-	double duration = (std::clock() - start) / (double)CLOCKS_PER_SEC * 1000.0;
-
-	//print run time
-	std::cout << "printf: " << duration << '\n';
-}
-
-void lidar_handler::analyze_scan() {
-	//dont input new data if it was a bad scan
-	if (!prv_bad_scan) {
-		//clear out old data
-		prv_raw_data.clear();
-		//set start angle to fill in data
-		double start_angle = LIDAR_START_ANGLE;
-		//iterate through all points
-		for (int i = 0; i < prv_data_points; i++) {
-			//calculate distance
-			double distance = convert_to_decimal(raw_hex_scan[26 + i])/1000.0;
-			//push distance with its angle into the vector
-			prv_raw_data.push_back(make_tuple(start_angle, distance));
-
-			//increment start angle
-			start_angle += LIDAR_ANG_RES;
-		}
-		//new data is ready for the grid
-		data_ready = true;
-	}
-	else {
-		cout << "bad scan" << endl;
-	}
-}
-
+/*--------------------------------------------
+performs scan -- update
+--------------------------------------------*/
 void lidar_handler::perform_scan() {
 
 #if LIDAR_TIMING
@@ -145,6 +79,9 @@ void lidar_handler::perform_scan() {
 	//receive the data to the message array and set flag
 	SUCCESSFUL = recv(sock, MESSAGE, sizeof(MESSAGE), NULL);
 
+	cout << MESSAGE << endl;
+
+
 	//close the socket
 	closesocket(sock);
 
@@ -164,7 +101,7 @@ void lidar_handler::perform_scan() {
 	//check for correctness (we only want to read good, whole messages)
 	if (results.size() > 25) {
 		prv_data_points = convert_to_decimal(results[25]);
-
+		cout << "data points: " << prv_data_points << endl;
 		//checking end of scan
 		if (results.size() < (prv_data_points + 27) /*|| convert_to_decimal(results[25 + prv_data_points + 2]) != 0*/) {
 			cout << "error string: " << results[25 + prv_data_points + 2]  << endl;
@@ -177,7 +114,7 @@ void lidar_handler::perform_scan() {
 		return;
 	}
 	//set raw hex data to the newest scan
-	raw_hex_scan = results;
+	prv_raw_hex_data = results;
 
 #if LIDAR_TIMING
 	//calculate run time
@@ -189,6 +126,31 @@ void lidar_handler::perform_scan() {
 
 }
 
+void lidar_handler::analyze_scan() {
+	//dont input new data if it was a bad scan
+	if (!prv_bad_scan) {
+		//clear out old data
+		prv_raw_data.clear();
+		//set start angle to fill in data
+		double start_angle = LIDAR_START_ANGLE;
+		//iterate through all points
+		for (int i = 0; i < prv_data_points; i++) {
+			//calculate distance
+			double distance = convert_to_decimal(prv_raw_hex_data[26 + i])/1000.0;
+			//push distance with its angle into the vector
+			prv_raw_data.push_back(make_tuple(start_angle, distance));
+
+			//increment start angle
+			start_angle += LIDAR_ANG_RES;
+		}
+		//new data is ready for the grid
+		prv_raw_data_ready = true;
+	}
+	else {
+		cout << "bad scan" << endl;
+	}
+}
+
 //for hex conversion
 int lidar_handler::convert_to_decimal(string num) {
 	int total;
@@ -198,14 +160,15 @@ int lidar_handler::convert_to_decimal(string num) {
 	return total;
 }
 
+
 lidar_data_packet* lidar_handler::get_data() {
-	data_ready = false;
+	prv_raw_data_ready = false;
 	return (&prv_raw_data);
 }
 
 //referencing raw angle, distance data
 bool lidar_handler::data_is_ready() {
-	if (data_ready) {
+	if (prv_raw_data_ready) {
 		
 		return true;
 	}
@@ -215,11 +178,11 @@ bool lidar_handler::data_is_ready() {
 }
 
 double lidar_handler::get_x_loc() {
-	return x_pos;
+	return prv_x_position;
 }
 
 double lidar_handler::get_y_loc() {
-	return y_pos;
+	return prv_y_position;
 }
 
 int lidar_handler::get_num_data_points() {
