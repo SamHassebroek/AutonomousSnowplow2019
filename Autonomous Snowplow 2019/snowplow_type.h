@@ -22,7 +22,7 @@ define the lidar currently being used
 
 /*---------------------------------------
 This defines macros based off of which
-lidar is in use so switching is wa
+lidar is in use so switching is easy
 ---------------------------------------*/
 #if ( LIDAR_IN_USE == TIM_551 )
 	#define LIDAR_IP_ADDR     ( "169.254.185.233" )
@@ -30,6 +30,7 @@ lidar is in use so switching is wa
 	#define LIDAR_START_ANGLE ( -45.0 )
 	#define LIDAR_ANG_RES     ( 1.0 )
 	#define LIDAR_DATA_POINTS ( 271 )
+	#define LIDAR_MSG_VLD     ( "RSSI1" )
 
 #elif ( LIDAR_IN_USE == LMS_511 )
 	/*---------------------------------------
@@ -41,8 +42,22 @@ lidar is in use so switching is wa
 	#define LIDAR_START_ANGLE ( -5.0 )
 	#define LIDAR_ANG_RES     ( 0.5 )
 	#define LIDAR_DATA_POINTS ( 271 )
+	#define LIDAR_MSG_VLD     ( "RSSI1" )
 
 #endif
 
-typedef vector<tuple<double, double>>     lidar_data_packet;
-typedef vector<vector<int>>               lidar_hit_map;
+/*---------------------------------------
+Field constants - eventually we should
+just be able to define the field (single
+i or triple i) and based off of that 
+width and height are set, just like lidar
+---------------------------------------*/
+#define FIELD_WIDTH_M    ( 5.0 )
+#define FIELD_LENGTH_M   ( 5.0 )
+#define MAP_RESOLUTION_M ( 0.10 )
+
+/*---------------------------------------
+Project specific types
+---------------------------------------*/
+typedef vector< tuple< double, double > >     lidar_data_packet;
+typedef vector< vector< int > >               lidar_hit_map;

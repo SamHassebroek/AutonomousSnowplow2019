@@ -13,17 +13,17 @@ using namespace std;
 
 class Grid {
 
+public:
+									Grid(lidar_handler *lidar);
+
 private:
-	static lidar_hit_map			prv_hit_map;
-	static double					prv_resolution;
-	static unsigned int				prv_tot_scans_mapped;
-	static lidar_data_packet *		prv_data_packet;
-	static lidar_handler *          prv_lidar_ref;
+	unsigned long long				prv_total_scans_mapped;
+	lidar_hit_map					prv_hit_map;
+	lidar_data_packet *				prv_data_packet;
+	lidar_handler *					prv_lidar_ref;
 
 public:
-									Grid(double width, double height, lidar_handler *lidar);
 	void							print_hit_map();
 	void							update_hit_map();
-	void							update_obj_map();
 
 };

@@ -6,44 +6,51 @@
 //#include "orientation_handler.h"
 #include "Grid.h"
 
+/*----------------------------------------------------------------
+local variables
+----------------------------------------------------------------*/
+unsigned long long              main_loop_iterations = 0;
+
+
 int main() {
 
 #if MAIN_TIMING
 	auto current_time = clock();
 #endif
 
-
-	/*lidar we are using with starting coordinates*/
-	lidar_handler Lidar(2.5, 0.0);
+	/*---------------------------------------
+	construct lidar object
+	---------------------------------------*/
+	lidar_handler Lidar;
 	
-	/*create the grid with a reference to the lidar that it will display hits for*/
-	Grid Grid(5.0, 5.0, &Lidar);
-
-	//local_handler local;
-
-	/*start the threads for the lidar and the grid*/
-	//std::thread lidar_thread(&lidar_handler::run, lidar);
-	//std::thread grid_thread(&Grid::run, Grid_ob);
-
-	//std::thread local_thread(&local_handler::run, local);
 	
-	//local_thread.join();
+	Grid Grid(&Lidar);
 
-	//orientation_handler a;
-	//std::thread angle_thread(&orientation_handler::run, a);
 
-	//angle_thread.join();
-
-	//run 
-	int i = 0;
+	/*---------------------------------------
+	main snowplow execution loop
+	---------------------------------------*/
 	while (1) {
 
+		/*---------------------------------------
+		perform scan and check for success
+		---------------------------------------*/
+		if (!Lidar.perform_scan()) {
+			cout << "Error performing scan. Trying again..." << endl;
+			continue;
+		}
 
-		//perform scan
-		Lidar.perform_scan();
+		/*---------------------------------------
+		analyze scan (change raw hex to angle and
+		distance pairs)
+		---------------------------------------*/
 		Lidar.analyze_scan();
+
+		/*---------------------------------------
+		update map of hits
+		---------------------------------------*/
 		Grid.update_hit_map();
-		if (i % 50 == 0) {
+		if (main_loop_iterations % 50 == 0) {
 			cout << "=====================================================" << endl;
 			Grid.print_hit_map();
 		}
@@ -58,8 +65,7 @@ int main() {
 		}
 #endif
 
-		i++;
+		main_loop_iterations++;
 	}
-		
-	return 0;
+
 }
