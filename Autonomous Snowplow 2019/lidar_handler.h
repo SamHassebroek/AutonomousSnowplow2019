@@ -26,13 +26,15 @@
 class lidar_handler {
 
 public:
-	                           lidar_handler();
+	                           lidar_handler(double x_pos, double y_pos);
 
 private:
 	vector<string>             prv_raw_hex_data;
 	lidar_data_packet          prv_raw_data;
 	lidar_data_packet          prv_safe_data;
 	bool                       prv_raw_data_ready;
+	double                     prv_x_position;
+	double                     prv_y_position;
 
 public:
 	bool                       perform_scan();
@@ -40,6 +42,14 @@ public:
 	int                        convert_to_decimal(string num);
 	lidar_data_packet *        get_data();
 	bool                       data_is_ready();
+	
+public:
+	inline double get_x_pos() {
+		return prv_x_position;
+	}
+	inline double get_y_pos() {
+		return prv_y_position;
+	}
 
 };
 

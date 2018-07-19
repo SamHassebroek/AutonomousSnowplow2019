@@ -1,9 +1,10 @@
 #pragma once
+#define _USE_MATH_DEFINES
 
 //general includes
+#include "lidar_handler.h"
 #include <iostream>
 #include <vector>
-#include "lidar_handler.h"
 #include <ctime>
 
 //types
@@ -21,6 +22,8 @@ private:
 	lidar_hit_map					prv_hit_map;
 	lidar_data_packet *				prv_data_packet;
 	lidar_handler *					prv_lidar_ref;
+	double                          prv_lidar_map_x_idx;
+	double                          prv_lidar_map_y_idx;
 
 public:
 	void							print_hit_map();

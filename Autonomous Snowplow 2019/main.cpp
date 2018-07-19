@@ -21,7 +21,7 @@ int main() {
 	/*---------------------------------------
 	construct lidar object
 	---------------------------------------*/
-	lidar_handler Lidar;
+	lidar_handler Lidar(1.0, 0.0);
 	
 	
 	Grid Grid(&Lidar);

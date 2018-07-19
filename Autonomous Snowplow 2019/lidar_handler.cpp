@@ -1,7 +1,8 @@
 #include "lidar_handler.h"
 
-lidar_handler::lidar_handler() {
-	//empty constructor
+lidar_handler::lidar_handler(double x_pos, double y_pos) {
+	prv_x_position = x_pos;
+	prv_y_position = y_pos;
 }
 
 /*--------------------------------------------
@@ -52,7 +53,7 @@ bool lidar_handler::perform_scan() {
 	//declaring the socket object
 	SOCKET sock = socket(AF_INET, SOCK_STREAM, NULL);
 
-	//Set a timeout
+	//Set a timeout, not that important as long as it doesnt cut off the lidar
 	int timeout = 80;
 	setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(int));
 

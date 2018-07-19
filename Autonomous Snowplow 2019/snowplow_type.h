@@ -10,7 +10,7 @@ Set these to 1 to compile the timing code
 and see output in the console
 ---------------------------------------*/
 #define LIDAR_TIMING ( 0 )
-#define MAIN_TIMING ( 0 )
+#define MAIN_TIMING  ( 0 )
 
 #define TIM_551 ( 0 )
 #define LMS_511 ( 1 )
@@ -52,12 +52,12 @@ just be able to define the field (single
 i or triple i) and based off of that 
 width and height are set, just like lidar
 ---------------------------------------*/
-#define FIELD_WIDTH_M    ( 5.0 )
+#define FIELD_WIDTH_M    ( 4.0 )
 #define FIELD_LENGTH_M   ( 5.0 )
 #define MAP_RESOLUTION_M ( 0.10 )
 
 /*---------------------------------------
 Project specific types
 ---------------------------------------*/
-typedef vector< tuple< double, double > >     lidar_data_packet;
-typedef vector< vector< int > >               lidar_hit_map;
+typedef vector<tuple<double, double>>     lidar_data_packet;
+typedef vector<vector<int>>               lidar_hit_map;
