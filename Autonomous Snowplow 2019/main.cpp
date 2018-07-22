@@ -23,8 +23,7 @@ int main() {
 	---------------------------------------*/
 	lidar_handler Lidar(1.0, 0.0);
 	
-	
-	Grid Grid(&Lidar);
+	grid_handler Grid(&Lidar);
 
 
 	/*---------------------------------------
@@ -50,6 +49,10 @@ int main() {
 		update map of hits
 		---------------------------------------*/
 		Grid.update_hit_map();
+
+		/*---------------------------------------
+		print hit/object map
+		---------------------------------------*/
 		if (main_loop_iterations % 50 == 0) {
 			cout << "=====================================================" << endl;
 			Grid.print_hit_map();

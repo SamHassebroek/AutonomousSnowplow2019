@@ -4,7 +4,7 @@
 Grid constructor - builds the hit map
 based off of size and resolution of field
 ---------------------------------------*/
-Grid::Grid(lidar_handler * lidar) {
+grid_handler::grid_handler(lidar_handler * lidar) {
 
 	prv_total_scans_mapped = 0;
 	prv_lidar_ref          = lidar;
@@ -27,37 +27,9 @@ Grid::Grid(lidar_handler * lidar) {
 }
 
 /*---------------------------------------
-prints the lidar hit map so that 0,0 is
-in the bottom left corner
----------------------------------------*/
-void Grid::print_hit_map() {
-	cout << "size of hitmap: " << prv_hit_map.size() << endl;
-	string map = "";
-	//need y to start at max, x at 0
-	for (int j = (prv_hit_map.size()-1); j >= 0; j--) {
-		for (int i = 0; i <  prv_hit_map[j].size(); i++) {
-
-			if (prv_lidar_map_x_idx == i && prv_lidar_map_y_idx == j) {
-				map.append("LLLL");
-				continue;
-			}
-
-			map.append(to_string(prv_hit_map[i][j]));
-			string test = to_string(prv_hit_map[i][j]);
-			for (int w = 0; w < 3 - test.length(); w++) {
-				map.append(" ");
-			}
-			map.append(" ");
-		}
-		map.append("\n");
-	}
-	cout << map;
-}
-
-/*---------------------------------------
 Adds lidar hits to the map
 ---------------------------------------*/
-void Grid::update_hit_map() {
+void grid_handler::update_hit_map() {
 	if (!prv_lidar_ref->data_is_ready()) {
 		return;
 	}
@@ -104,4 +76,68 @@ void Grid::update_hit_map() {
 	prv_lidar_map_y_idx = floor((prv_lidar_ref->get_y_pos()) / MAP_RESOLUTION_M);
 }
 
+/*---------------------------------------
+prints the lidar hit map so that 0,0 is
+in the bottom left corner
+---------------------------------------*/
+void grid_handler::print_hit_map() {
+	string map = "";
+	/*-------------------------------------------------
+	  ^^^^^^^^^^      Need to print the map with y
+	y ||||||||||      starting at max and x starting at
+	  --------->      0 since this is a vector of
+	      x           vectors.
+	-------------------------------------------------*/ 
+	for (int y = prv_hit_map[0].size() - 1; y >= 0; y--) {
+		for (int x = 0; x <  prv_hit_map.size(); x++) {
 
+			if (prv_lidar_map_x_idx == x && prv_lidar_map_y_idx == y) {
+				map.append("LLLL");
+				continue;
+			}
+
+			map.append(to_string(prv_hit_map[x][y]));
+			string test = to_string(prv_hit_map[x][y]);
+			for (int w = 0; w < 3 - test.length(); w++) {
+				map.append(" ");
+			}
+			map.append(" ");
+		}
+		map.append("\n\n");
+	}
+	cout << map;
+}
+
+/*---------------------------------------
+prints the lidar hit map so that 0,0 is
+in the bottom left corner
+---------------------------------------*/
+void grid_handler::print_obj_map() {
+	string map = "";
+	/*-------------------------------------------------
+	^^^^^^^^^^      Need to print the map with y
+	y ||||||||||      starting at max and x starting at
+	--------->      0 since this is a vector of
+	x           vectors.
+	-------------------------------------------------*/
+	for (int y = prv_hit_map[0].size() - 1; y >= 0; y--) {
+		for (int x = 0; x < prv_hit_map.size(); x++) {
+
+			if (prv_lidar_map_x_idx == x && prv_lidar_map_y_idx == y) {
+				map.append("L");
+				continue;
+			}
+
+			if (prv_hit_map[x][y] > 500) {
+				map.append("M");
+			}
+			else {
+				map.append(".");
+			}
+
+			map.append(" ");
+		}
+		map.append("\n");
+	}
+	cout << map;
+}

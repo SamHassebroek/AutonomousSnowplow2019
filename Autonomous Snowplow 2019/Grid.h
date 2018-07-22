@@ -12,10 +12,10 @@
 
 using namespace std;
 
-class Grid {
+class grid_handler {
 
 public:
-									Grid(lidar_handler *lidar);
+									grid_handler(lidar_handler *lidar);
 
 private:
 	unsigned long long				prv_total_scans_mapped;
@@ -26,7 +26,8 @@ private:
 	double                          prv_lidar_map_y_idx;
 
 public:
-	void							print_hit_map();
 	void							update_hit_map();
+	void							print_hit_map();
+	void                            print_obj_map();
 
 };

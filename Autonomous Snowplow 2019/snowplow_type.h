@@ -53,8 +53,8 @@ i or triple i) and based off of that
 width and height are set, just like lidar
 ---------------------------------------*/
 #define FIELD_WIDTH_M    ( 4.0 )
-#define FIELD_LENGTH_M   ( 5.0 )
-#define MAP_RESOLUTION_M ( 0.10 )
+#define FIELD_LENGTH_M   ( 15.0 )
+#define MAP_RESOLUTION_M ( 0.1 )
 
 /*---------------------------------------
 Project specific types
