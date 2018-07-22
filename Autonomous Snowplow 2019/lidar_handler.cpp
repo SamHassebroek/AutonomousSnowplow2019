@@ -3,6 +3,7 @@
 lidar_handler::lidar_handler(double x_pos, double y_pos) {
 	prv_x_position = x_pos;
 	prv_y_position = y_pos;
+	prv_orientation = 0.0;
 }
 
 /*--------------------------------------------

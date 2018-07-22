@@ -35,6 +35,7 @@ private:
 	bool                       prv_raw_data_ready;
 	double                     prv_x_position;
 	double                     prv_y_position;
+	double                     prv_orientation;
 
 public:
 	bool                       perform_scan();
@@ -50,6 +51,8 @@ public:
 	inline double get_y_pos() {
 		return prv_y_position;
 	}
-
+	inline double get_orientation() {
+		return prv_orientation;
+	}
 };
 

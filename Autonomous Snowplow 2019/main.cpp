@@ -21,8 +21,7 @@ int main() {
 	/*---------------------------------------
 	construct lidar object
 	---------------------------------------*/
-	lidar_handler Lidar(1.0, 0.0);
-	
+	lidar_handler Lidar(1.0, 1.0);
 	grid_handler Grid(&Lidar);
 
 
@@ -30,6 +29,22 @@ int main() {
 	main snowplow execution loop
 	---------------------------------------*/
 	while (1) {
+
+		/*---------------------------------------
+		Need to add in functionality to update
+		the orientation to the most recent value.
+		Also need to update the location to the 
+		most recent value. Since this is
+		relatively slow maybe use dead reckoning
+
+		Also need to think about the orientation 
+		upon the start of the run. Since IMU upon
+		startup is 0 then the field(grid) will 
+		generate thinking the plow is pointing 
+		forward at exactly 90 degress. If it isnt
+		then field orientation as a whole could 
+		be off. 
+		---------------------------------------*/
 
 		/*---------------------------------------
 		perform scan and check for success
@@ -55,15 +70,15 @@ int main() {
 		---------------------------------------*/
 		if (main_loop_iterations % 50 == 0) {
 			cout << "=====================================================" << endl;
-			Grid.print_hit_map();
+			Grid.print_obj_map();
 		}
 
 #if MAIN_TIMING
 		//calculate run time
 		double duration = (std::clock() - current_time) / (double)CLOCKS_PER_SEC * 1000.0;
 		current_time = clock();
-		//print run time
-		if (i != 0) {//don't print first reading
+		//don't print first reading
+		if (i != 0) {
 			std::cout << "Main loop execution time: " << duration << " ms\n";
 		}
 #endif

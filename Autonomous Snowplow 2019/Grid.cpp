@@ -45,6 +45,7 @@ void grid_handler::update_hit_map() {
 		Following does this for each point:
 		1. get angle and distance pair from lidar data
 		2. if angle is negative make it positive
+		2b. adjust angle for plow orientation
 		3. turn that pair into an x, y location
 		4. if its outside the map dont map it
 		5. count it unless count is at 999
@@ -54,6 +55,13 @@ void grid_handler::update_hit_map() {
 
 		if (angle < 0) {
 			angle = 360 - abs(angle);
+		}
+
+		if (prv_lidar_ref->get_orientation() >= 0 && prv_lidar_ref->get_orientation() < 180 ) {
+			angle -= prv_lidar_ref->get_orientation();
+		}
+		else {
+			angle += (360.0 - prv_lidar_ref->get_orientation());
 		}
 
 		double x_loc = ( cos( angle * M_PI / 180.0) * distance ) + prv_lidar_ref->get_x_pos();
@@ -128,7 +136,7 @@ void grid_handler::print_obj_map() {
 				continue;
 			}
 
-			if (prv_hit_map[x][y] > 500) {
+			if (prv_hit_map[x][y] > MAP_OBJ_THRESH) {
 				map.append("M");
 			}
 			else {

@@ -55,6 +55,7 @@ width and height are set, just like lidar
 #define FIELD_WIDTH_M    ( 4.0 )
 #define FIELD_LENGTH_M   ( 15.0 )
 #define MAP_RESOLUTION_M ( 0.1 )
+#define MAP_OBJ_THRESH   ( 100 )
 
 /*---------------------------------------
 Project specific types
