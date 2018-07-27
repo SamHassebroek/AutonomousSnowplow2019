@@ -1,47 +1,27 @@
 #include "orientation_handler.h"
-#include <stdlib.h>
-#include <iostream>
-#include <functional>
-#include <string>
-#include <algorithm>
 
-using namespace std;
-
-string buildingString = "";
-string mostRecent = "";
-string anotherFuckingString = "";
-double myfloat = 0.0;
-
-const char *portName = "\\\\.\\COM3";
-Serial* arduino = new Serial(portName);
-
-void orientation_handler::write(char c)
-{
-
+/*---------------------------------------
+constructor for orientation interface.
+This takes a reference to an atomic
+double so its easy to modify the 
+---------------------------------------*/
+orientation_handler::orientation_handler(atomic<double> * orientation) {
+	prv_ori_ref = orientation;
 }
 
-orientation_handler::orientation_handler()
-{
+/*---------------------------------------
+main orientation execution loop
+---------------------------------------*/
+void orientation_handler::run() {
 
-}
-
-float orientation_handler::getAngle()
-{
-	return myfloat;
-}
-
-void orientation_handler::write(char* c)
-{
-	arduino->WriteData(c, 8);
-}
-
-void orientation_handler::run()
-{
-	//set intitial variables
+	string buildingString = "";
+	string mostRecent = "";
+	string anotherFuckingString = "";
+	const char *portName = IMU_COM_PORT;
+	Serial* arduino = new Serial(portName);
 	char incomingData[512] = "";
 	int dataLength = 255;
 	int readResult = 0;
-	this->angle = 0;
 	bool firstOpen = false;
 
 	//this is the loop that will constantly get the orientation and run on its own thread
@@ -60,7 +40,7 @@ void orientation_handler::run()
 				firstOpen = false;
 				string mysubstring = mostRecent.substr(mostRecent.find('[') + 1, mostRecent.find(']') - 1);
 				anotherFuckingString = mysubstring;
-				myfloat = stof(anotherFuckingString);
+				*prv_ori_ref = (double)stof(anotherFuckingString);
 				continue;
 			}
 		}
@@ -71,7 +51,7 @@ void orientation_handler::run()
 				firstOpen = true;
 			}
 		}
-		
+
 		buildingString += incomingData;
 	}
 }

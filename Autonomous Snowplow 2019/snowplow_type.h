@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <tuple>
+#include <atomic>
 
 using namespace std;
 
@@ -19,6 +20,12 @@ and see output in the console
 define the lidar currently being used
 ---------------------------------------*/
 #define LIDAR_IN_USE TIM_551
+
+/*---------------------------------------
+define com port for decawave and imu
+---------------------------------------*/
+#define DECAWAVE_COM_PORT ( "\\\\.\\COM6" )
+#define IMU_COM_PORT      ( "\\\\.\\COM3" )
 
 /*---------------------------------------
 This defines macros based off of which

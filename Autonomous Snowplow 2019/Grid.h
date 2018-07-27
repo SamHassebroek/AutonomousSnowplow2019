@@ -15,7 +15,7 @@ using namespace std;
 class grid_handler {
 
 public:
-									grid_handler(lidar_handler *lidar);
+									grid_handler(lidar_handler * lidar);
 
 private:
 	unsigned long long				prv_total_scans_mapped;

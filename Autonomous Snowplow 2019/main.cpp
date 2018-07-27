@@ -1,16 +1,20 @@
 #include <ctime>
 #include <thread>
+
 #include "snowplow_type.h"
 #include "lidar_handler.h"
-//#include "local_handler.h"
-//#include "orientation_handler.h"
+#include "local_handler.h"
+#include "orientation_handler.h"
 #include "Grid.h"
 
 /*----------------------------------------------------------------
-local variables
+                          main variables
 ----------------------------------------------------------------*/
 unsigned long long              main_loop_iterations = 0;
-
+unsigned long long              total_failed_scans   = 0;
+atomic<double>                  orientation = 0.0;
+atomic<double>                  x_position;
+atomic<double>                  y_position;
 
 int main() {
 
@@ -19,11 +23,19 @@ int main() {
 #endif
 
 	/*---------------------------------------
-	construct lidar object
+	construct interfaces
 	---------------------------------------*/
-	lidar_handler Lidar(1.0, 1.0);
-	grid_handler Grid(&Lidar);
+	lidar_handler          Lidar(1.0, 1.0);
+	grid_handler           Grid(&Lidar);
+	decawave_handler       Location(&x_position, &y_position);
+	orientation_handler    Orientation(&orientation);//ref to orientation
 
+	/*---------------------------------------
+	start orientation and location threads.
+	- eventually start stopsign here too
+	---------------------------------------*/
+	thread location_thread(&decawave_handler::run, Location);
+	thread orientation_thread(&orientation_handler::run, Orientation);
 
 	/*---------------------------------------
 	main snowplow execution loop
@@ -51,6 +63,7 @@ int main() {
 		---------------------------------------*/
 		if (!Lidar.perform_scan()) {
 			cout << "Error performing scan. Trying again..." << endl;
+			total_failed_scans += 1;
 			continue;
 		}
 
@@ -71,6 +84,8 @@ int main() {
 		if (main_loop_iterations % 50 == 0) {
 			cout << "=====================================================" << endl;
 			Grid.print_obj_map();
+			cout << "Total failed scans: " << total_failed_scans << " ";
+			cout << "Total scans mapped: " << main_loop_iterations << endl;
 		}
 
 #if MAIN_TIMING

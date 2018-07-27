@@ -1,17 +1,22 @@
 #pragma once
-#pragma once
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
+#include <functional>
+#include <string>
+#include <algorithm>
 #include "SerialPort.h"
+#include "snowplow_type.h"
 
-class orientation_handler
-{
+class orientation_handler {
+
 public:
-	orientation_handler();
-	void write(char command);
-	void run();
-	float getAngle();
-	void write(char* c);
+	                    orientation_handler(atomic<double> * orientation);
+
 private:
-	float angle;
+	atomic<double> *    prv_ori_ref;
+
+public:
+	void                run();
+
 };
