@@ -26,7 +26,7 @@
 class lidar_handler {
 
 public:
-	                           lidar_handler(double x_pos, double y_pos);
+	                           lidar_handler();
 
 private:
 	vector<string>             prv_raw_hex_data;
@@ -44,15 +44,5 @@ public:
 	lidar_data_packet *        get_data();
 	bool                       data_is_ready();
 	
-public:
-	inline double get_x_pos() {
-		return prv_x_position;
-	}
-	inline double get_y_pos() {
-		return prv_y_position;
-	}
-	inline double get_orientation() {
-		return prv_orientation;
-	}
 };
 

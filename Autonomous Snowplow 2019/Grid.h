@@ -15,7 +15,8 @@ using namespace std;
 class grid_handler {
 
 public:
-									grid_handler(lidar_handler * lidar);
+									grid_handler(lidar_handler * lidar, atomic<double> * orientation,
+										atomic<double> * x_position, atomic<double> * y_position);
 
 private:
 	unsigned long long				prv_total_scans_mapped;
@@ -24,9 +25,12 @@ private:
 	lidar_handler *					prv_lidar_ref;
 	double                          prv_lidar_map_x_idx;
 	double                          prv_lidar_map_y_idx;
+	atomic<double> *                prv_orientation_ref;
+	atomic<double> *                prv_x_pos_ref;
+	atomic<double> *                prv_y_pos_ref;
 
 public:
-	void							update_hit_map();
+	bool							update_hit_map();
 	void							print_hit_map();
 	void                            print_obj_map();
 

@@ -24,10 +24,11 @@ void orientation_handler::run() {
 	int readResult = 0;
 	bool firstOpen = false;
 
-	//this is the loop that will constantly get the orientation and run on its own thread
+	/*--------------------------------------------------
+	this works, but should probably be cleaned up
+	--------------------------------------------------*/
 	while (true)
-	{
-		//read 
+	{ 
 		readResult = arduino->ReadData(incomingData, dataLength);
 		incomingData[readResult] = 0;
 		if (firstOpen)

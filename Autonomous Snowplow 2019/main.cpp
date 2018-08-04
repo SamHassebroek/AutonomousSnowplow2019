@@ -13,8 +13,8 @@
 unsigned long long              main_loop_iterations = 0;
 unsigned long long              total_failed_scans   = 0;
 atomic<double>                  orientation = 0.0;
-atomic<double>                  x_position;
-atomic<double>                  y_position;
+atomic<double>                  x_position  = NULL;
+atomic<double>                  y_position  = NULL;
 
 int main() {
 
@@ -23,12 +23,16 @@ int main() {
 #endif
 
 	/*---------------------------------------
-	construct interfaces
+	construct interfaces - they take in refs
+	to atomic variables so that their object
+	can safely modify them without having to 
+	return anything. They can also read them
+	whenever needed safely.
 	---------------------------------------*/
-	lidar_handler          Lidar(1.0, 1.0);
-	grid_handler           Grid(&Lidar);
+	lidar_handler          Lidar;
+	orientation_handler    Orientation(&orientation);
 	decawave_handler       Location(&x_position, &y_position);
-	orientation_handler    Orientation(&orientation);//ref to orientation
+	grid_handler           Grid(&Lidar, &orientation, &x_position, &y_position);
 
 	/*---------------------------------------
 	start orientation and location threads.
@@ -43,11 +47,7 @@ int main() {
 	while (1) {
 
 		/*---------------------------------------
-		Need to add in functionality to update
-		the orientation to the most recent value.
-		Also need to update the location to the 
-		most recent value. Since this is
-		relatively slow maybe use dead reckoning
+		orientation and lcoation update by ref
 
 		Also need to think about the orientation 
 		upon the start of the run. Since IMU upon
@@ -76,16 +76,25 @@ int main() {
 		/*---------------------------------------
 		update map of hits
 		---------------------------------------*/
-		Grid.update_hit_map();
+		if (!Grid.update_hit_map()) {
+			cout << "Error updating hit map. Trying again..." << endl;
+			total_failed_scans += 1;
+			continue;
+		}
 
 		/*---------------------------------------
 		print hit/object map
 		---------------------------------------*/
 		if (main_loop_iterations % 50 == 0) {
 			cout << "=====================================================" << endl;
-			Grid.print_obj_map();
+			//Grid.print_obj_map();
 			cout << "Total failed scans: " << total_failed_scans << " ";
 			cout << "Total scans mapped: " << main_loop_iterations << endl;
+
+			//testing stuff
+			cout << "Orientation: " << orientation << endl;
+			cout << "x pos: " << x_position << endl;
+			cout << "y pos: " << y_position << endl;
 		}
 
 #if MAIN_TIMING

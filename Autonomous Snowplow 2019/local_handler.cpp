@@ -12,8 +12,8 @@ written to and read from different threads safely.
 decawave_handler::decawave_handler(atomic<double> * x_ref, atomic<double> * y_ref) {
 	prv_x_pos_ref     = x_ref;
 	prv_y_pos_ref     = y_ref;
-	*prv_x_pos_ref    = 0.0;
-	*prv_y_pos_ref    = 0.0;
+	*prv_x_pos_ref    = 1.0;
+	*prv_y_pos_ref    = 1.0;
 }
 
 /*--------------------------------------------------
@@ -52,7 +52,9 @@ void decawave_handler::run() {
 		on the last received data.
 		---------------------------------------*/
 		if (strlen(incomingData) != 0) {
+			cout << "poll counter: " << poll_counter << endl;
 			poll_counter = 0;
+			cout << "got new data: " << incomingData << endl;
 		}
 		else {
 			poll_counter++;
@@ -99,12 +101,12 @@ void decawave_handler::run() {
 					else if (first_open_bracket && recent_scan[i] == '[') {
 						second_open_bracket = true;
 					}
+					if (first_open_bracket && second_open_bracket && !x_done) {
+						x_str += recent_scan[i];
+					}
 					if (first_open_bracket && second_open_bracket && recent_scan[i] == ',') {
 						x_done = true;
 						continue;
-					}
-					if (first_open_bracket && second_open_bracket && !x_done) {
-						x_str += recent_scan[i];
 					}
 					if (first_open_bracket && second_open_bracket && x_done && !y_done) {
 						y_str += recent_scan[i];
@@ -161,13 +163,13 @@ void decawave_handler::run() {
 
 #if PRINT_PARSED_LOCATION
 				cout << "x location: ";
-				for (int i = 0; i < x_string.length(); i++) {
-					cout << x_string[i];
+				for (int i = 0; i < x_str.length(); i++) {
+					cout << x_str[i];
 				}
 
 				cout << endl << "y location: ";
-				for (int i = 0; i < y_string.length(); i++) {
-					cout << y_string[i];
+				for (int i = 0; i < y_str.length(); i++) {
+					cout << y_str[i];
 				}
 				cout << endl;
 #endif
