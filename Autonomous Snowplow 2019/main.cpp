@@ -6,15 +6,17 @@
 #include "local_handler.h"
 #include "orientation_handler.h"
 #include "Grid.h"
+#include "navigation_handler.h"
 
 /*----------------------------------------------------------------
                           main variables
 ----------------------------------------------------------------*/
 unsigned long long              main_loop_iterations = 0;
 unsigned long long              total_failed_scans   = 0;
-atomic<double>                  orientation = 0.0;
+atomic<double>                  orientation = 45.0;
 atomic<double>                  x_position  = NULL;
 atomic<double>                  y_position  = NULL;
+drive_operation                 drive_op = STOP;
 
 int main() {
 
@@ -33,6 +35,7 @@ int main() {
 	orientation_handler    Orientation(&orientation);
 	decawave_handler       Location(&x_position, &y_position);
 	grid_handler           Grid(&Lidar, &orientation, &x_position, &y_position);
+	navigation_handler     Nav(&orientation, &x_position, &y_position);
 
 	/*---------------------------------------
 	start orientation and location threads.
@@ -45,18 +48,6 @@ int main() {
 	main snowplow execution loop
 	---------------------------------------*/
 	while (1) {
-
-		/*---------------------------------------
-		orientation and lcoation update by ref
-
-		Also need to think about the orientation 
-		upon the start of the run. Since IMU upon
-		startup is 0 then the field(grid) will 
-		generate thinking the plow is pointing 
-		forward at exactly 90 degress. If it isnt
-		then field orientation as a whole could 
-		be off. 
-		---------------------------------------*/
 
 		/*---------------------------------------
 		perform scan and check for success
@@ -78,9 +69,14 @@ int main() {
 		---------------------------------------*/
 		if (!Grid.update_hit_map()) {
 			cout << "Error updating hit map. Trying again..." << endl;
-			total_failed_scans += 1;
 			continue;
 		}
+
+		/*---------------------------------------
+		get drive operation from nav interface
+		---------------------------------------*/
+		drive_op = Nav.update();
+		Sleep(2000);
 
 		/*---------------------------------------
 		print hit/object map

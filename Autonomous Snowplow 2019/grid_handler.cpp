@@ -39,7 +39,7 @@ bool grid_handler::update_hit_map() {
 		cout << "Data isn't ready for grid to process. Grid update failed." << endl;
 		return false;
 	}
-	if (*prv_x_pos_ref == NULL || *prv_y_pos_ref == NULL) {
+	if (*prv_x_pos_ref == NULL && *prv_y_pos_ref == NULL) {
 		/*---------------------------------------
 		If the current position is 0,0 then it
 		probably isn't a real positional update

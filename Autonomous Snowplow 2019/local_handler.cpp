@@ -12,6 +12,8 @@ written to and read from different threads safely.
 decawave_handler::decawave_handler(atomic<double> * x_ref, atomic<double> * y_ref) {
 	prv_x_pos_ref     = x_ref;
 	prv_y_pos_ref     = y_ref;
+	//setting position to 1,1 initially for testing but in the future the plow should wait until
+	//its first positional update to do anything. maybe make a while loop somewhere
 	*prv_x_pos_ref    = 1.0;
 	*prv_y_pos_ref    = 1.0;
 }
