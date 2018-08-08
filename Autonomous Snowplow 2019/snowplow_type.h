@@ -22,6 +22,7 @@ used here can be found in macro_defs.cpp
 #define NAV_POINT_METHOD   MANUAL
 #define NAV_POINT_THRESH_M ( 0.08 )
 #define ORI_THRESH_D       ( 10.0 )
+#define SPEED_SCALAR       ( 1.0 )
 
 /*---------------------------------------
 lidar macros
@@ -84,6 +85,12 @@ enum {
 	LEFT     = 2,
 	STOP     = 3
 };
+
+typedef struct {
+	drive_operation drive_op;
+	unsigned char intensity;
+	char stop_char;
+} drive_data_pkt;
 
 typedef struct {
 	double x;

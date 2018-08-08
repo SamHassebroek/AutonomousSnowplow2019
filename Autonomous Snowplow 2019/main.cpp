@@ -13,10 +13,10 @@
 ----------------------------------------------------------------*/
 unsigned long long              main_loop_iterations = 0;
 unsigned long long              total_failed_scans   = 0;
-atomic<double>                  orientation = 45.0;
+atomic<double>                  orientation = 0.0;
 atomic<double>                  x_position  = NULL;
 atomic<double>                  y_position  = NULL;
-drive_operation                 drive_op = STOP;
+drive_data_pkt                  drive_pkt = { STOP, 0x00, '\0' };
 
 int main() {
 
@@ -75,7 +75,8 @@ int main() {
 		/*---------------------------------------
 		get drive operation from nav interface
 		---------------------------------------*/
-		drive_op = Nav.update();
+		Nav.update( &drive_pkt );
+		cout << "power:" << ((double)drive_pkt.intensity)/255.0*100.0 << "%" << endl;
 		Sleep(2000);
 
 		/*---------------------------------------

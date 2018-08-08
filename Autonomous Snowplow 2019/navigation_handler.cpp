@@ -32,7 +32,7 @@ navigation_handler::navigation_handler(atomic<double> * orientation, atomic<doub
 
 }
 
-drive_operation navigation_handler::update() {
+void navigation_handler::update( drive_data_pkt * drive_pkt ) {
 	/*---------------------------------------------
 	check to see if the plow is at the prv_target.
 	get coords first so they stay the same for this
@@ -60,6 +60,10 @@ drive_operation navigation_handler::update() {
 		//if reached final point return stop for drive op
 
 #endif
+
+		/*---------------------------------------
+		Recalculate orientation for next target
+		---------------------------------------*/
 		prv_goal_orientation = ( 180.0 * atan2( prv_target.y - cur_y, prv_target.x - cur_x ) ) / M_PI;
 		if (prv_goal_orientation < 0) {
 			prv_goal_orientation = 360 + prv_goal_orientation;
@@ -68,8 +72,11 @@ drive_operation navigation_handler::update() {
 
 	}
 	else {
+
 		/*---------------------------------------------
-		calculate orientation boundaries
+		calculate orientation boundaries. modified is
+		to signal when the goal +/- tolerance contains
+		thye 0 degree mark because math gets confusing
 		---------------------------------------------*/
 		bool modified = false;
 		double lower_bound = prv_goal_orientation - ORI_THRESH_D;
@@ -98,29 +105,85 @@ drive_operation navigation_handler::update() {
 		}
 		else {
 			/*---------------------------------------------
+			Orientation isn't correct at this point. 
 			Depending on whether the current orientation is
 			closer to the lower_bound or higher_bound the
 			drive operation will be chosen
 			---------------------------------------------*/
 			if( modified ) {
 				if( abs( lower_bound - cur_ori ) > abs( higher_bound - cur_ori ) ) {
-					cout << "Need to turn right" << endl;
-					return RIGHT;
+					cout << "Need to turn right." << endl;
+					drive_pkt->drive_op  = RIGHT;
+					drive_pkt->intensity = get_turn_power( abs( higher_bound - cur_ori ) );
+
 				}
 				else {
-					cout << "Need to turn left" << endl;
-					return LEFT;
+					cout << "Need to turn left." << endl;
+					drive_pkt->drive_op  = LEFT;
+					drive_pkt->intensity = get_turn_power( abs( lower_bound - cur_ori ) );
 				}
 			}
+			else {
+				double l_turn_deg = 0.0, r_turn_deg = 0.0;
+				if (cur_ori < prv_goal_orientation) {
+					l_turn_deg = prv_goal_orientation - cur_ori;
+					r_turn_deg = cur_ori + ( 360.0 - prv_goal_orientation );
+				}
+				else {
+					l_turn_deg = prv_goal_orientation + ( 360.0 - cur_ori );
+					r_turn_deg = cur_ori - prv_goal_orientation;
+				}
+				if (l_turn_deg < r_turn_deg) {
+					cout << "Need to turn left. Non-modified." << endl;
+					drive_pkt->drive_op  = LEFT;
+					drive_pkt->intensity = get_turn_power( l_turn_deg );
+				}
+				else {
+					cout << "Need to turn right. Non-modified." << endl;
+					drive_pkt->drive_op  = RIGHT;
+					drive_pkt->intensity = get_turn_power( r_turn_deg );
+				}
+			}
+			/*---------------------------------------------
+			plow needs to turn so since drive op has been
+			set, set power and return
+			---------------------------------------------*/
+			return;
 		}
-
+		/*--------------------------------------------------
+		Orientation is correct - set drive mode and power
+		--------------------------------------------------*/
+		drive_pkt->drive_op  = STRAIGHT;
+		drive_pkt->intensity = get_straight_power( sqrt( pow( ( prv_target.x - cur_x ), 2 )+pow( ( prv_target.y - cur_y ), 2 ) ) );
 	}
+}
 
-	/*
-	first check if we are on the prv_target
-	if we are get next prv_target or finish
-	if not check orientation and distance
-	set speed an drive operation based off of that
-	*/
-	return STOP;
+unsigned char navigation_handler::get_turn_power( double deg ) {
+	if ( deg >= 120.0 ) { 
+		return ( floor( 1.0 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+	else if ( deg >= 90.0 ) {
+		return ( floor( 0.8 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+	else if ( deg >= 45.0 ) {
+		return ( floor( 0.5 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+	else {
+		return ( floor( 0.35 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+}
+
+unsigned char navigation_handler::get_straight_power( double dist ) {
+	if ( dist >= 2.0 ) {
+		return ( floor( 1.0 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+	else if ( dist >= 1.0 ) {
+		return ( floor( 0.6 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+	else if ( dist >= 0.5 ) {
+		return ( floor( 0.4 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
+	else {
+		return ( floor( 0.3 * SPEED_SCALAR * UCHAR_MAX ) );
+	}
 }

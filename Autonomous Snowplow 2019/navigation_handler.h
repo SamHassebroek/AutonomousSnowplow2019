@@ -17,5 +17,9 @@ private:
 	double                          prv_goal_orientation;
 
 public:
-	drive_operation                 update();
+	void                            update( drive_data_pkt * );
+
+private:
+	unsigned char                   get_turn_power(double dist);
+	unsigned char                   get_straight_power(double dist);
 };
