@@ -28,7 +28,7 @@ void decawave_handler::run() {
 	--------------------------------------------------*/
 	string building_scan    = "";
 	string recent_scan      = "";
-	Serial * SP             = new Serial(DECAWAVE_COM_PORT);
+	Serial * SP             = new Serial( DECAWAVE_COM_PORT );
 	char incomingData[256]  = "";			   									   
 	int dataLength          = 255;
 	int readResult          = 0;

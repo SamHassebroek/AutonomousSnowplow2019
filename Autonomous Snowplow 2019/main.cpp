@@ -3,20 +3,21 @@
 
 #include "snowplow_type.h"
 #include "lidar_handler.h"
-#include "local_handler.h"
 #include "orientation_handler.h"
+#include "local_handler.h"
 #include "Grid.h"
 #include "navigation_handler.h"
+#include "motor_interface.h"
 
 /*----------------------------------------------------------------
                           main variables
 ----------------------------------------------------------------*/
 unsigned long long              main_loop_iterations = 0;
-unsigned long long              total_failed_scans   = 0;
+unsigned long long              total_failed_scans = 0;
 atomic<double>                  orientation = 0.0;
-atomic<double>                  x_position  = NULL;
-atomic<double>                  y_position  = NULL;
-drive_data_pkt                  drive_pkt = { STOP, 0x00, '\0' };
+atomic<double>                  x_position = NULL;
+atomic<double>                  y_position = NULL;
+drive_data_pkt                  drive_pkt = { STOP, 0x00, true, '\0' };
 
 int main() {
 
@@ -36,6 +37,7 @@ int main() {
 	decawave_handler       Location(&x_position, &y_position);
 	grid_handler           Grid(&Lidar, &orientation, &x_position, &y_position);
 	navigation_handler     Nav(&orientation, &x_position, &y_position);
+	motor_interface        Motor(&drive_pkt);
 
 	/*---------------------------------------
 	start orientation and location threads.
@@ -77,12 +79,14 @@ int main() {
 		---------------------------------------*/
 		Nav.update( &drive_pkt );
 		cout << "power:" << ((double)drive_pkt.intensity)/255.0*100.0 << "%" << endl;
+
+		Motor.send_pkt_to_motors();
 		Sleep(2000);
 
 		/*---------------------------------------
 		print hit/object map
 		---------------------------------------*/
-		if (main_loop_iterations % 50 == 0) {
+		if (main_loop_iterations % 5 == 0) {
 			cout << "=====================================================" << endl;
 			//Grid.print_obj_map();
 			cout << "Total failed scans: " << total_failed_scans << " ";

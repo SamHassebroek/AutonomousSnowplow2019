@@ -33,6 +33,14 @@ navigation_handler::navigation_handler(atomic<double> * orientation, atomic<doub
 }
 
 void navigation_handler::update( drive_data_pkt * drive_pkt ) {
+	/*---------------------------------------
+	Make a copy to compare at the end to tell
+	whether an updated drive packet needs to
+	be sent to the arduino
+	---------------------------------------*/
+	drive_data_pkt drive_pkt_before;
+	memcpy(&drive_pkt_before, drive_pkt, sizeof(drive_data_pkt));
+
 	/*---------------------------------------------
 	check to see if the plow is at the prv_target.
 	get coords first so they stay the same for this
@@ -145,9 +153,13 @@ void navigation_handler::update( drive_data_pkt * drive_pkt ) {
 				}
 			}
 			/*---------------------------------------------
-			plow needs to turn so since drive op has been
-			set, set power and return
+			check for a change to any value. if so send
+			new packet to arduino
 			---------------------------------------------*/
+			if (memcmp( &drive_pkt_before, drive_pkt, sizeof( drive_data_pkt ) ) ) {
+				drive_pkt->changed = true;
+				cout << "packet values changed" << endl;
+			}
 			return;
 		}
 		/*--------------------------------------------------
@@ -155,6 +167,15 @@ void navigation_handler::update( drive_data_pkt * drive_pkt ) {
 		--------------------------------------------------*/
 		drive_pkt->drive_op  = STRAIGHT;
 		drive_pkt->intensity = get_straight_power( sqrt( pow( ( prv_target.x - cur_x ), 2 )+pow( ( prv_target.y - cur_y ), 2 ) ) );
+
+		/*---------------------------------------------
+		check for a change to any value. if so send
+		new packet to arduino
+		---------------------------------------------*/
+		if (memcmp(&drive_pkt_before, drive_pkt, sizeof(drive_data_pkt))) {
+			drive_pkt->changed = true;
+			cout << "packet values changed" << endl;
+		}
 	}
 }
 

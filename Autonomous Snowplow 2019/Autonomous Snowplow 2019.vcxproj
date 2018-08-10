@@ -111,17 +111,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="grid_handler.cpp" />
-    <ClCompile Include="lidar_handler.cpp" />
-    <ClCompile Include="local_handler.cpp" />
+    <ClCompile Include="lidar_interface.cpp" />
+    <ClCompile Include="location_interface.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="motor_interface.cpp" />
     <ClCompile Include="navigation_handler.cpp" />
-    <ClCompile Include="orientation_handler.cpp" />
+    <ClCompile Include="imu_interface.cpp" />
     <ClCompile Include="serial_port.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Grid.h" />
     <ClInclude Include="lidar_handler.h" />
     <ClInclude Include="macro_defs.h" />
+    <ClInclude Include="motor_interface.h" />
     <ClInclude Include="navigation_handler.h" />
     <ClInclude Include="snowplow_type.h" />
     <ClInclude Include="local_handler.h" />
