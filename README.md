@@ -1,5 +1,8 @@
 # Iowa State University Robotics Autonomous Snowplow Software Repository
 This repository contains code for the 2019 Autonomous Snowplow competition.
+# Version Goals
+v0.9 - Path planning using A*.
+v1.0 - Stop sign detection as well capability to read and navigate a list of points.
 # Main Loop Execution Steps
 This is assuming that all variables and interfaces (or objects such as the LiIDAR or Decawave) have been created.
 1. Perform a LiDAR scan. The LiDAR is always scanning so this will grab the data for the most recent scan which we can safely assume was a very short time ago (< 67 ms for the TIM551 and < 15 ms for the LMS511) given the rate at which they perform scans. If the scan was unsuccessful then start the loop over again. 
