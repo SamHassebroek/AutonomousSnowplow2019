@@ -39,6 +39,12 @@
     <ClCompile Include="motor_interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="stopsign_detector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\dlib-19.15\dlib\all\source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lidar_handler.h">
@@ -68,5 +74,11 @@
     <ClInclude Include="motor_interface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="stopsign_detector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
