@@ -54,67 +54,67 @@ int main() {
 	main snowplow execution loop
 	---------------------------------------*/
 	while (1) {
-		/*---------------------------------------
-		perform scan and check for success
-		---------------------------------------*/
-		if (!Lidar.perform_scan()) {
-			cout << "Error performing scan. Trying again..." << endl;
-			total_failed_scans += 1;
-			continue;
-		}
-		/*---------------------------------------
-		check for stop sign detection
-		---------------------------------------*/
+//		/*---------------------------------------
+//		perform scan and check for success
+//		---------------------------------------*/
+//		if (!Lidar.perform_scan()) {
+//			cout << "Error performing scan. Trying again..." << endl;
+//			total_failed_scans += 1;
+//			continue;
+//		}
+//		/*---------------------------------------
+//		check for stop sign detection
+//		---------------------------------------*/
 		cout << "Stop sign detected: " << stopsign_detected << endl;
-		/*---------------------------------------
-		analyze scan (change raw hex to angle and
-		distance pairs)
-		---------------------------------------*/
-		Lidar.analyze_scan();
-
-		/*---------------------------------------
-		update map of hits
-		---------------------------------------*/
-		if (!Grid.update_hit_map()) {
-			cout << "Error updating hit map. Trying again..." << endl;
-			continue;
-		}
-
-		/*---------------------------------------
-		get drive operation from nav interface
-		---------------------------------------*/
-		Nav.update( &drive_pkt );
-		cout << "power:" << ((double)drive_pkt.intensity)/255.0*100.0 << "%" << endl;
-
-		Motor.send_pkt_to_motors();
-		Sleep(2000);
-
-		/*---------------------------------------
-		print hit/object map
-		---------------------------------------*/
-		if (main_loop_iterations % 5 == 0) {
-			cout << "=====================================================" << endl;
-			//Grid.print_obj_map();
-			cout << "Total failed scans: " << total_failed_scans << " ";
-			cout << "Total scans mapped: " << main_loop_iterations << endl;
-
-			//testing stuff
-			cout << "Orientation: " << orientation << endl;
-			cout << "x pos: " << x_position << endl;
-			cout << "y pos: " << y_position << endl;
-		}
-
-#if MAIN_TIMING
-		//calculate run time
-		double duration = (std::clock() - current_time) / (double)CLOCKS_PER_SEC * 1000.0;
-		current_time = clock();
-		//don't print first reading
-		if (i != 0) {
-			std::cout << "Main loop execution time: " << duration << " ms\n";
-		}
-#endif
-
-		main_loop_iterations++;
+//		/*---------------------------------------
+//		analyze scan (change raw hex to angle and
+//		distance pairs)
+//		---------------------------------------*/
+//		Lidar.analyze_scan();
+//
+//		/*---------------------------------------
+//		update map of hits
+//		---------------------------------------*/
+//		if (!Grid.update_hit_map()) {
+//			cout << "Error updating hit map. Trying again..." << endl;
+//			continue;
+//		}
+//
+//		/*---------------------------------------
+//		get drive operation from nav interface
+//		---------------------------------------*/
+//		Nav.update( &drive_pkt );
+//		cout << "power:" << ((double)drive_pkt.intensity)/255.0*100.0 << "%" << endl;
+//
+//		Motor.send_pkt_to_motors();
+//		Sleep(2000);
+//
+//		/*---------------------------------------
+//		print hit/object map
+//		---------------------------------------*/
+//		if (main_loop_iterations % 5 == 0) {
+//			cout << "=====================================================" << endl;
+//			//Grid.print_obj_map();
+//			cout << "Total failed scans: " << total_failed_scans << " ";
+//			cout << "Total scans mapped: " << main_loop_iterations << endl;
+//
+//			//testing stuff
+//			cout << "Orientation: " << orientation << endl;
+//			cout << "x pos: " << x_position << endl;
+//			cout << "y pos: " << y_position << endl;
+//		}
+//
+//#if MAIN_TIMING
+//		//calculate run time
+//		double duration = (std::clock() - current_time) / (double)CLOCKS_PER_SEC * 1000.0;
+//		current_time = clock();
+//		//don't print first reading
+//		if (i != 0) {
+//			std::cout << "Main loop execution time: " << duration << " ms\n";
+//		}
+//#endif
+//
+//		main_loop_iterations++;
 	}
 
 }
