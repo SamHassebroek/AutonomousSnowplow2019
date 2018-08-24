@@ -41,7 +41,11 @@ void orientation_handler::run() {
 				firstOpen = false;
 				string mysubstring = mostRecent.substr(mostRecent.find('[') + 1, mostRecent.find(']') - 1);
 				anotherFuckingString = mysubstring;
-				*prv_ori_ref = (double)stof(anotherFuckingString);
+				double ori = stod(anotherFuckingString);
+				if (ori == 360.0) {
+					ori = 0.0;
+				}
+				*prv_ori_ref = ori;
 				continue;
 			}
 		}

@@ -13,9 +13,9 @@ decawave_handler::decawave_handler(atomic<double> * x_ref, atomic<double> * y_re
 	prv_x_pos_ref     = x_ref;
 	prv_y_pos_ref     = y_ref;
 	//setting position to 1,1 initially for testing but in the future the plow should wait until
-	//its first positional update to do anything. maybe make a while loop somewhere
-	*prv_x_pos_ref    = 1.0;
-	*prv_y_pos_ref    = 1.0;
+	//its first positional update to do anything. 
+	*prv_x_pos_ref    = 2.0;
+	*prv_y_pos_ref    = 0.0;
 }
 
 /*--------------------------------------------------
@@ -26,14 +26,14 @@ void decawave_handler::run() {
 	/*--------------------------------------------------
 	Local variables
 	--------------------------------------------------*/
-	string building_scan    = "";
-	string recent_scan      = "";
-	Serial * SP             = new Serial( DECAWAVE_COM_PORT );
-	char incomingData[256]  = "";			   									   
-	int dataLength          = 255;
-	int readResult          = 0;
-	int poll_counter        = 0;
-	bool first_scan         = true;
+	string building_scan   = "";
+	string recent_scan     = "";
+	Serial * SP            = new Serial( DECAWAVE_COM_PORT );
+	char incomingData[256] = "";			   									   
+	int dataLength         = 255;
+	int readResult         = 0;
+	int poll_counter       = 0;
+	bool first_scan        = true;
 
 	/*---------------------------------------
 	Run while connected to the arduino.

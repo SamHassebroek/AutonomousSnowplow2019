@@ -46,6 +46,11 @@ int main() {
 	thread location_thread(&decawave_handler::run, Location);
 	thread orientation_thread(&orientation_handler::run, Orientation);
 
+	/*This is so that we dont do anything until we get a position update
+	while( x_position == NULL && y_position == NULL ) {
+	  
+	}*/
+
 	/*---------------------------------------
 	main snowplow execution loop
 	---------------------------------------*/
@@ -78,16 +83,16 @@ int main() {
 		get drive operation from nav interface
 		---------------------------------------*/
 		Nav.update( &drive_pkt );
-		cout << "power:" << ((double)drive_pkt.intensity)/255.0*100.0 << "%" << endl;
 
 		Motor.send_pkt_to_motors();
-		Sleep(2000);
+		//Sleep(2000);
 
 		/*---------------------------------------
 		print hit/object map
 		---------------------------------------*/
-		if (main_loop_iterations % 5 == 0) {
+		if (main_loop_iterations % 100 == 0) {
 			cout << "=====================================================" << endl;
+			cout << "power:" << ((double)drive_pkt.intensity)/255.0*100.0 << "%" << endl;
 			//Grid.print_obj_map();
 			cout << "Total failed scans: " << total_failed_scans << " ";
 			cout << "Total scans mapped: " << main_loop_iterations << endl;
@@ -97,6 +102,8 @@ int main() {
 			cout << "x pos: " << x_position << endl;
 			cout << "y pos: " << y_position << endl;
 		}
+		//cout << "Orientation: " << orientation << endl;
+		
 
 #if MAIN_TIMING
 		//calculate run time

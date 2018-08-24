@@ -13,17 +13,17 @@ Various project config options - change as necessary.
 Certain macro definitions as well as other options 
 used here can be found in macro_defs.cpp
 ---------------------------------------------------*/
-#define LIDAR_IN_USE       TIM_551
+#define LIDAR_IN_USE       LMS_511
 #define DECAWAVE_COM_PORT  ( "\\\\.\\COM6" )
-#define IMU_COM_PORT       ( "\\\\.\\COM5" )
-#define MOTOR_COM_PORT     ( "\\\\.\\COM3" )
+#define IMU_COM_PORT       ( "\\\\.\\COM3" )
+#define MOTOR_COM_PORT     ( "\\\\.\\COM7" )
 #define FIELD              CUSTOM
-#define MAP_RESOLUTION_M   ( 0.10 )
+#define MAP_RESOLUTION_M   ( 0.05 )
 #define MAP_OBJ_THRESH     ( 100 )
 #define NAV_POINT_METHOD   MANUAL
 #define NAV_POINT_THRESH_M ( 0.08 )
 #define ORI_THRESH_D       ( 10.0 )
-#define SPEED_SCALAR       ( 1.0 )
+#define SPEED_SCALAR       ( 0.75 )
 
 /*---------------------------------------
 lidar macros
@@ -41,12 +41,12 @@ lidar macros
 	These macros needs to be updated
 	with the actual lms 511 info
 	---------------------------------------*/
-	#define LIDAR_IP_ADDR     ( "169.254.185.233" )
+	#define LIDAR_IP_ADDR     ( "169.254.144.5" )
 	#define LIDAR_PORT        ( 2112 )
 	#define LIDAR_START_ANGLE ( -5.0 )
 	#define LIDAR_ANG_RES     ( 0.5 )
-	#define LIDAR_DATA_POINTS ( 271 )
-	#define LIDAR_MSG_VLD     ( "RSSI1" )
+	#define LIDAR_DATA_POINTS ( 381 )
+	#define LIDAR_MSG_VLD     ( "0" )
 
 #endif
 
@@ -61,8 +61,8 @@ length under field == custom
 #define FIELD_WIDTH_M    ( 7.0 )
 #define FIELD_LENGTH_M   ( 15.0 )
 #elif( FIELD == CUSTOM )
-#define FIELD_WIDTH_M    ( 3.0 )
-#define FIELD_LENGTH_M   ( 3.0 )
+#define FIELD_WIDTH_M    ( 4.0 )
+#define FIELD_LENGTH_M   ( 10.0 )
 #endif
 
 /*---------------------------------------
@@ -97,4 +97,5 @@ typedef struct {
 typedef struct {
 	double x;
 	double y;
+	//may add ref for linked list of points
 } snowplow_nav_point;

@@ -58,7 +58,7 @@ bool grid_handler::update_hit_map() {
 	orientation of the lidar for this set of
 	points as well as position.
 	---------------------------------------*/
-	double orienation = *prv_orientation_ref;
+	double orientation = *prv_orientation_ref;
 	double x_pos = *prv_x_pos_ref;
 	double y_pos = *prv_y_pos_ref;
 	for (int i = 0; i < LIDAR_DATA_POINTS; i++) {
@@ -79,16 +79,24 @@ bool grid_handler::update_hit_map() {
 			angle = 360 - abs(angle);
 		}
 
-		if (orienation >= 0 && orienation < 180 ) {
-			angle -= orienation;
+		if (orientation >= 0 && orientation < 180 ) {
+			angle += orientation;
 		}
 		else {
-			angle += (360.0 - orienation);
+			angle -= (360.0 - orientation);
 		}
 
 		double x_loc = ( cos( angle * M_PI / 180.0) * distance ) + x_pos;
 		double y_loc = ( sin( angle * M_PI / 180.0) * distance ) + y_pos;
 			
+
+		//temporary for debugging
+		if (i == (floor(LIDAR_DATA_POINTS / 2))) {
+			//cout << "Location at 90 deg: " << x_loc << ", " << y_loc << endl;
+			//cout << "Orientation and angle: " << orientation << ", " << angle << endl;
+		}
+
+
 		int x_index = floor(x_loc / MAP_RESOLUTION_M);
 		int y_index = floor(y_loc / MAP_RESOLUTION_M);
 
