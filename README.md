@@ -31,3 +31,9 @@ opencv_flann310.lib
 <YourPathToProject>\AutonomousSnowplow2019\packages\opencv.win.native.310.3.0\build\native\lib\x64\v140\Release
 7. Add this to your system path:
 <YourPathToProject>\AutonomousSnowplow2019\packages\opencv.win.native.redist.310.3.0\build\native\bin\x64\v140\Release
+
+# Installation of dlib:
+1. Download dlib from here: http://dlib.net
+2. Extract it to "C:/ISU Robotics/"
+3. In visual studio, add "dlib/all/source.cpp" to your project.
+4. Open solution properties.  Add "C:/ISU Robotics/dlib-version" to your Additional Include Directories.
