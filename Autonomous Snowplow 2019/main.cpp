@@ -1,4 +1,5 @@
-#include <ctime>
+//#include <ctime>
+#include "time.h"
 #include <thread>
 
 #include "snowplow_type.h"
@@ -24,7 +25,7 @@ drive_data_pkt                  drive_pkt = { STOP, 0x00, true, '\0' };
 int main() {
 
 #if MAIN_TIMING
-	auto current_time = clock();
+	auto current_time = std::clock();
 #endif
 
 	/*---------------------------------------
@@ -107,7 +108,7 @@ int main() {
 //#if MAIN_TIMING
 //		//calculate run time
 //		double duration = (std::clock() - current_time) / (double)CLOCKS_PER_SEC * 1000.0;
-//		current_time = clock();
+//		current_time = std::clock();
 //		//don't print first reading
 //		if (i != 0) {
 //			std::cout << "Main loop execution time: " << duration << " ms\n";

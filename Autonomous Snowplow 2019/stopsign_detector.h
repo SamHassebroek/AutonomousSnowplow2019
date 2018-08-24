@@ -43,7 +43,7 @@ public:
 
 private:
 	cv::VideoCapture cap;
-	boolean visualize;
+	bool visualize;
 };
 
 

@@ -11,12 +11,17 @@ stopsign_detector::stopsign_detector(bool vis, atomic<bool> * stopsign_detected)
 	{
 		cout << "Failed to initialize camera" << endl;
 	}
+	else
+	{
+		cap.set(3, 640);
+		cap.set(4, 480);
+	}
 	ifstream fin("C:/ISU Robotics/AutonomousSnowplow2019/x64/Release/object_detector.svm", ios::binary);
 	if (!fin)
 	{
-		cout << "Couldn't find object_detector.svm" << endl;
+		cout << "Couldn't find object_detector.svm, please ensure it's located in /x64/Release/." << endl;
 	}
-	deserialize(detector, fin);
+	deserialize(detector, fin); //Load trained detector into our detector object.
 	detected = false;
 }
 
@@ -24,24 +29,30 @@ bool stopsign_detector::detect() {
 	cv::Mat frame;
 	bool ret = false;
 	/*-------------------
-	Capture Image, Detect Stop Sign
+	Capture Image, convert to dlib format
 	--------------------*/
 	cap >> frame;
 	array2d<bgr_pixel> dlibImage;
 	assign_image(dlibImage, dlib::cv_image<bgr_pixel>(frame));
+
+	/*-------------------
+	Detect rectangles (supports multiple stop signs)
+	--------------------*/
 	const std::vector<rectangle> rects = detector(dlibImage);
-	//cout << "Number of detections: " << rects.size() << endl;
 	if (rects.size() > 0) {
 		ret = true;
-		//cout << rects.at(0) << endl;
 	}
+
+	/*-------------------
+	Visualize detected stop signs
+	--------------------*/
 	if (visualize)
 	{
-		if (rects.size() > 0) {
+		if (ret) {
 			cv::Rect rectToDraw(rects.at(0).left(), rects.at(0).top(), rects.at(0).width(), rects.at(0).height());
 			cv::rectangle(frame, rectToDraw, cv::Scalar(0, 255, 0));
 		}
-		cv::imshow("Image", frame);
+		cv::imshow("Stop Sign Detector", frame);
 	}
 	cv::waitKey(1);
 	return ret;
