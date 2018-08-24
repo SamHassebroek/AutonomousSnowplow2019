@@ -53,3 +53,4 @@ C:\ISU Robotics\AutonomousSnowplow2019\packages\opencv.win.native.redist.310.3.0
 
 # First time compilation:
 You may get an error compiling the first time.  Click one of the errors.  It may take you to a file with the line CUSTOM=-1.  Comment this line out and recompile.
+Be sure to set mode from "Debug" to "Release", and set the platform to x64.
